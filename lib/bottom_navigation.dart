@@ -1,16 +1,19 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pavitras_kitchen/category.dart';
 import 'package:pavitras_kitchen/homescreen.dart';
 import 'package:pavitras_kitchen/profile.dart';
 import 'package:pavitras_kitchen/search.dart';
+
 // import 'package:scribblings/screens/about_screen.dart';
 // import 'package:scribblings/screens/home_screen.dart';
 class TempBottomNavigation extends StatefulWidget {
   @override
   _TempBottomNavigationState createState() => _TempBottomNavigationState();
 }
+
 class _TempBottomNavigationState extends State<TempBottomNavigation> {
   List<NavigationItem> navItems;
   final List<Widget> _pages = [
@@ -20,6 +23,7 @@ class _TempBottomNavigationState extends State<TempBottomNavigation> {
     ProfileScreen()
   ];
   int _selectedIndex = 0;
+
   @override
   void initState() {
     navItems = [
@@ -30,11 +34,13 @@ class _TempBottomNavigationState extends State<TempBottomNavigation> {
     ];
     super.initState();
   }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     var navigationBar = Platform.isIOS
@@ -77,11 +83,14 @@ class _TempBottomNavigationState extends State<TempBottomNavigation> {
           );
   }
 }
+
 class NavigationItem {
   NavigationItem(this.icon, this.title);
+
   Widget icon;
   @required
   String title;
+
   BottomNavigationBarItem item() {
     return BottomNavigationBarItem(icon: icon, title: Text(title));
   }

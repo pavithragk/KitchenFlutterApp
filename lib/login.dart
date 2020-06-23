@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pavitras_kitchen/homescreen.dart';
+import 'package:pavitras_kitchen/services/firebaseApiController.dart';
 import 'package:pavitras_kitchen/signup.dart';
 import 'package:pavitras_kitchen/utils/colors.dart';
 import 'package:validators/validators.dart';
@@ -21,20 +22,18 @@ class LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     final emailField = TextFormField(
-    // onSaved: (),
       validator: (value) {
         if (value.isEmpty) {
           return 'Please enter your email';
         }
-       var text = (!isAlpha(value.toString()))
-           ? "Enter a valid email"
-           : null;
+        var text = (!isAlpha(value.toString())) ? "Enter a valid email" : null;
         return text;
       },
       controller: emailController,
       decoration: InputDecoration(
         labelText: 'name',
-        labelStyle: TextStyle(color:ColorConstants.secondaryColor,fontSize: 20.0),
+        labelStyle:
+            TextStyle(color: ColorConstants.secondaryColor, fontSize: 20.0),
         fillColor: ColorConstants.primaryColor,
         filled: true,
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -62,16 +61,17 @@ class LoginState extends State<Login> {
       controller: passwordController,
       decoration: InputDecoration(
         suffixIcon: Padding(
-        padding: const EdgeInsetsDirectional.only(end: 12.0),
-        child: IconButton(
-          icon: (Icon(Icons.lock)), onPressed: (){
-            setState(() {
-              obSecureText =!obSecureText;
-            });
-          })
-        ),
+            padding: const EdgeInsetsDirectional.only(end: 12.0),
+            child: IconButton(
+                icon: (Icon(Icons.lock)),
+                onPressed: () {
+                  setState(() {
+                    obSecureText = !obSecureText;
+                  });
+                })),
         labelText: 'password',
-        labelStyle: TextStyle(color:ColorConstants.secondaryColor,fontSize: 20.0),
+        labelStyle:
+            TextStyle(color: ColorConstants.secondaryColor, fontSize: 20.0),
         fillColor: ColorConstants.primaryColor,
         filled: true,
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -94,18 +94,9 @@ class LoginState extends State<Login> {
             padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             onPressed: () {
               if (_formKey.currentState.validate()) {
-                Scaffold.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Processing data'),
-                  ),
-                );
+                loginFb();
               }
-              Navigator.push (
-                context,
-                MaterialPageRoute(builder: (context) => SignUp()),
-               );
-              // print(emailController.text);
-              // print(passwordController.text);
+              
             },
             child: Text(
               "Login",
@@ -115,8 +106,7 @@ class LoginState extends State<Login> {
               ),
             ),
           );
-        })
-        );
+        }));
 
     return Scaffold(
       backgroundColor: ColorConstants.primaryColor,
@@ -126,57 +116,81 @@ class LoginState extends State<Login> {
             style: TextStyle(color: ColorConstants.secondaryColor)),
       ),
       body: Builder(
-      builder: (context) {
-        return Form(
-          key: _formKey,
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-             image: DecorationImage(
-            image: AssetImage('assets/images/image2.jpg'),
-            fit: BoxFit.cover,
-            ),
-            ),
-            child: Column(
-              children: <Widget>[
-                Expanded(child: ListView(children: <Widget>[
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 100.0, left: 50.0,
-                    right: 50.0),
-                    child: Column(
-                      children: <Widget>[
-                        Text('Login Here',
-                         style: TextStyle(color:ColorConstants.primaryColor, fontSize: 20.0),),
-                        SizedBox(
-                    height: 25.0),
-                        Column(
-                        children: <Widget>[
-                        emailField,
-                        SizedBox(
-                    height: 25.0),
-                    passwordField,
-                    SizedBox(
-                     height: 25.0),
-                     loginButton,
-                      ],
-                    ),
-                      ],
-                    ),
-                  ),
-                
+        builder: (context) {
+          return Form(
+            key: _formKey,
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/image2.jpg'),
+                  fit: BoxFit.cover,
                 ),
-                ]
-                )
-                ),
-              ],
+              ),
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                      child: ListView(children: <Widget>[
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 100.0, left: 50.0, right: 50.0),
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              'Login Here',
+                              style: TextStyle(
+                                  color: ColorConstants.primaryColor,
+                                  fontSize: 20.0),
+                            ),
+                            SizedBox(height: 25.0),
+                            Column(
+                              children: <Widget>[
+                                emailField,
+                                SizedBox(height: 25.0),
+                                passwordField,
+                                SizedBox(height: 25.0),
+                                loginButton,
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ])),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
       ),
-     
     );
+  }
+  void loginFb(){
+    firebaseAuth
+    .signInWithEmailAndPassword(
+      email: emailController.text, password: passwordController.text)
+      .then((result){
+        Navigator.pushReplacement(context,
+         MaterialPageRoute(builder: (context) => HomeScreen(uid:result.user.uid)),);
+      }).catchError((err){
+            showDialog(
+                context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text(err.message),
+              actions: [
+                FlatButton(
+                  child: Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    });
   }
 }

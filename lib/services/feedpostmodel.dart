@@ -1,4 +1,4 @@
-class FeedPost{
+class FeedPost {
   String category;
   String ingredients;
   String steps;
@@ -20,7 +20,7 @@ class FeedPost{
     category = json['category'];
     ingredients = json['ingredients'];
     steps = json['steps'];
-    like = json['like'];
+    like = json[like];
     recipeName = json['recipeName'];
     recipeImage = json['recipeImage'];
     comment = json['comment'];

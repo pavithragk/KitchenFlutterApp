@@ -1,5 +1,3 @@
-
-
 const String homeRoute = '/';
 const String searchRoute = '/SearchScreen';
 const String categoryRoute = '/CategoryScreen';
