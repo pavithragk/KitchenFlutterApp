@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pavitras_kitchen/addpost.dart';
 import 'package:pavitras_kitchen/login.dart';
+import 'package:pavitras_kitchen/services/firebaseApiController.dart';
 import 'package:pavitras_kitchen/utils/colors.dart';
 import 'package:validators/validators.dart';
 
@@ -26,6 +29,15 @@ class ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController changeController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  String displayName;
+  String displayPhoneNumber;
+  String displayEmail;
+  String displayPassword;
+
+  Future<FirebaseUser> user = firebaseAuth.currentUser();
+
+  
+
   @override
   Widget build(BuildContext context) {
     Future uploadPic(BuildContext context)async{
@@ -36,7 +48,6 @@ class ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       print("profile picture uploaded");
        Scaffold.of(context).showSnackBar(SnackBar(content: Text('profile picture uploaded')));
-      
     });
   
 
@@ -296,5 +307,48 @@ class ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
     );
-  }
+
+
+
+   
+  //  setState(() {
+  //    userSnapshot = userSnapshot.data;
+  //  });
+
+      // return Scaffold(
+      //    body: Container(
+      //      child: Column(
+      //        children: <Widget>[
+      //       // Text("${userSnapshot["email"]}"),
+      //       Text("text1"),
+      //       Text("text1"),
+      //       Text("text1"),
+      //       RaisedButton(onPressed: (){
+      //        getName();
+      //       })
+      //     ],
+      //   ),
+      // ),
+      
+
+      
+    // );
+   
+}
+
+// void getName()async{
+//      final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+//    final currentUserId = user.uid;
+//     await databaseReference
+//     .collection("users")
+//     .document(currentUserId)
+//     .get()
+//     .then((DocumentSnapshot userSnapshot) => {
+//          print(userSnapshot["email"])
+       
+//     }
+    
+//     );
+//   }
+
 }

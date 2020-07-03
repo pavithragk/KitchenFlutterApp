@@ -122,7 +122,7 @@ class FirebaseController {
               .collection("posts")
               .document()
               .setData({
-              "addName": addNameController.text,
+              "recipeName": recipeNameController.text,
               "ingredients": addIngredientsController.text,
              "steps": addStepsController.text,
              "category": dropdownValue,
@@ -142,6 +142,70 @@ class FirebaseController {
     });
     
   }
+
+  Future<String> getCurrentUID()async{
+    return (await firebaseAuth.currentUser()).uid;
+    
+  }
+
+  // void getName()async{
+  //   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  //   final currentUserId = user.uid;
+  //   await databaseReference
+  //   .collection("users")
+  //   .document(currentUserId)
+  //   .get()
+  //   .then((DocumentSnapshot userSnapshot) => {
+  //      print(userSnapshot["uid"])
+
+  //   });
+  // }
   
+
+  // void registerToFb( BuildContext context) async{
+  //   firebaseAuth
+  //       .createUserWithEmailAndPassword(
+  //           email: emailController.text, password: passwordController.text)
+  //       .then((result) async {
+  //       //  String fileName = basename(fileImage.path);
+  //       // StorageTaskSnapshot snapshot = await storage
+  //       // .ref()
+  //       // .child(fileName)
+  //       // .putFile(fileImage)
+  //       // .onComplete;
+  //       // final String url = (await snapshot.ref.getDownloadURL());
+  //     // print("URL is $url");
+  //     databaseReference.collection("users").document(result.user.uid).setData({
+  //       "email": emailController.text,
+  //       "phonenumber": phoneController.text,
+  //       "name": nameController.text,
+  //       "uid": result.user.uid,
+  //       "profilePicture": url
+  //     }).then((res) {
+  //       print("res");
+  //           Navigator.pushReplacement(
+  //            context,
+  //          MaterialPageRoute(builder: (context) => HomeScreen(uid:result.user.uid)),
+  //         );
+  //     });
+  //   }).catchError((err) {
+  //           showDialog(
+  //               context: context,
+  //         builder: (BuildContext context) {
+  //           return AlertDialog(
+  //             title: Text("Error"),
+  //             content: Text(err.message),
+  //             actions: [
+  //               FlatButton(
+  //                 child: Text("Ok"),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //               )
+  //             ],
+  //           );
+  //         });
+  //   });
 }
+
 

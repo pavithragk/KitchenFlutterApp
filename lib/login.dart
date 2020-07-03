@@ -152,6 +152,14 @@ class LoginState extends State<Login> {
                                 passwordField,
                                 SizedBox(height: 25.0),
                                 loginButton,
+                                GestureDetector(child:
+                                Text("Not have an account? Sign up here", style: TextStyle(decoration: TextDecoration.underline,
+                                color: ColorConstants.primaryColor
+                                ),),
+                                onTap:(){
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context)=> SignUp()));
+                                }),
                               ],
                             ),
                           ],

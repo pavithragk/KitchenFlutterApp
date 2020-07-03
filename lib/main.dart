@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pavitras_kitchen/addProfileScreen.dart';
 import 'package:pavitras_kitchen/addpost.dart';
 import 'package:pavitras_kitchen/home.dart';
 import 'package:pavitras_kitchen/homescreen.dart';
@@ -34,11 +35,12 @@ class MyApp extends StatelessWidget {
       // home: DetailScreen(),
       // home: CommentScreen()
           // home: Home(),
-         home: HomeScreen(),
+        //  home: HomeScreen(),
       // home: FeedCard(),
       //  home: AddPost(),
-      // home: SplashScreen(),
-      // home: SplashPage(),
+      //  home: SplashScreen(),
+      home: SplashPage(),
+      // home: AddProfileScreen(),
     );
   }
 }

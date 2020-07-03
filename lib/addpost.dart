@@ -11,7 +11,7 @@ import 'package:pavitras_kitchen/utils/colors.dart';
 
 
  File fileImage;
-final TextEditingController addNameController = TextEditingController();
+final TextEditingController recipeNameController = TextEditingController();
 final TextEditingController addIngredientsController = TextEditingController();
 final TextEditingController addStepsController = TextEditingController();
  FirebaseController controller = FirebaseController();
@@ -43,8 +43,8 @@ class AddPost extends StatefulWidget {
 class AddPostState extends State<AddPost> {
   
   final _formKey = GlobalKey<FormState>();
-  final addName = TextFormField(
-    controller: addNameController,
+  final recipeName = TextFormField(
+    controller: recipeNameController,
     decoration: InputDecoration(
       border: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(0.0)),
@@ -138,7 +138,7 @@ class AddPostState extends State<AddPost> {
                       )),
                   Padding(
                     padding: const EdgeInsets.only(right: 50.0, left: 50.0),
-                    child: addName,
+                    child: recipeName,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(

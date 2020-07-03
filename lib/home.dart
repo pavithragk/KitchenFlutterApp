@@ -22,7 +22,7 @@ class HomeState extends State<Home>{
   
     controller.getData();
     super.initState();
-    controller.setData();
+     controller.setData();
   }
 
   @override

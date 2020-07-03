@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pavitras_kitchen/addProfileScreen.dart';
 import 'package:pavitras_kitchen/addpost.dart';
 import 'package:pavitras_kitchen/homescreen.dart';
 import 'package:pavitras_kitchen/services/firebaseApiController.dart';
@@ -156,8 +157,10 @@ class SignUpState extends State<SignUp> {
             padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             onPressed: () {
               if (_formKey.currentState.validate()) {
-                // registerToFb();
-                controller.getUserData();
+                // Navigator.push(context, 
+                // MaterialPageRoute(builder: (context)=> AddProfileScreen()));
+                 registerToFb();
+                //  controller.getUserData();
               }
             },
             child: Text(
@@ -231,10 +234,10 @@ class SignUpState extends State<SignUp> {
         "uid": result.user.uid,
       }).then((res) {
         print("res");
-            // Navigator.pushReplacement(
-            //           context,
-            //     MaterialPageRoute(builder: (context) => HomeScreen(uid:result.user.uid)),
-            //   );
+            Navigator.pushReplacement(
+                      context,
+                MaterialPageRoute(builder: (context) => HomeScreen(uid:result.user.uid)),
+              );
       });
     }).catchError((err) {
             showDialog(
