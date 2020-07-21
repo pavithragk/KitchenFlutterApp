@@ -1,12 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pavitras_kitchen/addProfileScreen.dart';
 import 'package:pavitras_kitchen/addpost.dart';
 import 'package:pavitras_kitchen/homescreen.dart';
+import 'package:pavitras_kitchen/profile.dart';
 import 'package:pavitras_kitchen/services/firebaseApiController.dart';
-// import 'package:pavitras_kitchen/services/firebaseauth.dart';
+
 import 'package:pavitras_kitchen/utils/colors.dart';
 import 'package:validators/validators.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -16,13 +17,11 @@ class SignUp extends StatefulWidget {
 }
 
 final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
- 
+final TextEditingController passwordController = TextEditingController();
+final TextEditingController nameController = TextEditingController();
+final TextEditingController phoneController = TextEditingController();
 
 class SignUpState extends State<SignUp> {
-
   final _formKey = GlobalKey<FormState>();
   bool obsecureText = true;
 
@@ -157,10 +156,9 @@ class SignUpState extends State<SignUp> {
             padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             onPressed: () {
               if (_formKey.currentState.validate()) {
-                // Navigator.push(context, 
-                // MaterialPageRoute(builder: (context)=> AddProfileScreen()));
-                 registerToFb();
+                // registerToFb();
                 //  controller.getUserData();
+
               }
             },
             child: Text(
@@ -214,6 +212,12 @@ class SignUpState extends State<SignUp> {
                       passwordField,
                       SizedBox(height: 15.0),
                       signUpButton,
+                      RaisedButton(onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
+                      }),
                     ])
                   ]),
                 ))
@@ -222,42 +226,44 @@ class SignUpState extends State<SignUp> {
       }),
     );
   }
-  void registerToFb() {
-    firebaseAuth
-        .createUserWithEmailAndPassword(
-            email: emailController.text, password: passwordController.text)
-        .then((result) {
-      databaseReference.collection("users").document(result.user.uid).setData({
-        "email": emailController.text,
-        "phonenumber": phoneController.text,
-        "name": nameController.text,
-        "uid": result.user.uid,
-      }).then((res) {
-        print("res");
-            Navigator.pushReplacement(
-                      context,
-                MaterialPageRoute(builder: (context) => HomeScreen(uid:result.user.uid)),
-              );
-      });
-    }).catchError((err) {
-            showDialog(
-                context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Error"),
-              content: Text(err.message),
-              actions: [
-                FlatButton(
-                  child: Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
-    });
-  }
+
+  // void registerToFb() {
+  //   firebaseAuth
+  //       .createUserWithEmailAndPassword(
+  //           email: emailController.text, password: passwordController.text)
+  //       .then((result) {
+  //     databaseReference.collection("users").document(result.user.uid).setData({
+  //       "email": emailController.text,
+  //       "phonenumber": phoneController.text,
+  //       "name": nameController.text,
+  //       "uid": result.user.uid,
+  //     }).then((res) {
+  //       print("res");
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => HomeScreen(uid: result.user.uid)),
+  //       );
+  //     });
+  //   }).catchError((err) {
+  //     showDialog(
+  //         context: context,
+  //         builder: (BuildContext context) {
+  //           return AlertDialog(
+  //             title: Text("Error"),
+  //             content: Text(err.message),
+  //             actions: [
+  //               FlatButton(
+  //                 child: Text("Ok"),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //               )
+  //             ],
+  //           );
+  //         });
+  //   });
+  // }
 
   // @override
   // void dispose() {
@@ -268,4 +274,3 @@ class SignUpState extends State<SignUp> {
   //   phoneController.dispose();
   // }
 }
-

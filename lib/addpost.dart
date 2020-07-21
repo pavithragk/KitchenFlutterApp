@@ -15,6 +15,7 @@ final TextEditingController recipeNameController = TextEditingController();
 final TextEditingController addIngredientsController = TextEditingController();
 final TextEditingController addStepsController = TextEditingController();
  FirebaseController controller = FirebaseController();
+ final _formKey = GlobalKey<FormState>();
 String dropdownValue = 'Breads';
 final listOfCategories = [
   "Breads",
@@ -32,8 +33,10 @@ final listOfCategories = [
 
 class AddPost extends StatefulWidget {
   
+  
   @override
   State<StatefulWidget> createState() {
+    // final _formKey = GlobalKey<FormState>();
    
     return AddPostState();
   }
@@ -42,8 +45,13 @@ class AddPost extends StatefulWidget {
 
 class AddPostState extends State<AddPost> {
   
-  final _formKey = GlobalKey<FormState>();
+  
   final recipeName = TextFormField(
+    validator: (value){
+      if(value.isEmpty){
+        return "please enter Recipe name";
+      }
+    },
     controller: recipeNameController,
     decoration: InputDecoration(
       border: OutlineInputBorder(
@@ -53,8 +61,14 @@ class AddPostState extends State<AddPost> {
     ),
   );
     final ingredients = TextFormField(
+      
+      validator: (value){
+      if(value.isEmpty){
+        return "please enter recipe ingredients";
+      }
+    },
     controller: addIngredientsController,
-    maxLines: 99,
+    // maxLines: 200,
     decoration: InputDecoration(
       hintText: "Ingredients",
       border: OutlineInputBorder(
@@ -62,8 +76,13 @@ class AddPostState extends State<AddPost> {
     ),
   );
   final steps = TextFormField(
+    validator: (value){
+      if(value.isEmpty){
+        return "please enter a recipe steps";
+      }
+    },
     controller: addStepsController,
-    maxLines: 99,
+    //  maxLines: 200,
     decoration: InputDecoration(
       hintText: "Add Steps",
       border: OutlineInputBorder(
@@ -82,7 +101,10 @@ class AddPostState extends State<AddPost> {
       onPressed: () {
         // updateData();
         // deleteData();
-         controller.setData();
+         if (_formKey.currentState.validate()) {
+            // controller.getData();
+           controller.setData();
+         }
       });
 
   @override
@@ -95,6 +117,11 @@ class AddPostState extends State<AddPost> {
     });
   }
     final selectCategory = DropdownButtonFormField(
+    //   validator: (value){
+    //   if(value.isEmpty){
+    //     return "please select a category";
+    //   }
+    // },
       value: dropdownValue,
       icon: Icon(Icons.arrow_downward),
       decoration: InputDecoration(

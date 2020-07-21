@@ -4,6 +4,7 @@ import 'package:pavitras_kitchen/services/firebaseApiController.dart';
 import 'package:pavitras_kitchen/signup.dart';
 import 'package:pavitras_kitchen/utils/colors.dart';
 import 'package:validators/validators.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -22,13 +23,13 @@ class LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     final emailField = TextFormField(
-      validator: (value) {
-        if (value.isEmpty) {
-          return 'Please enter your email';
-        }
-        var text = (!isAlpha(value.toString())) ? "Enter a valid email" : null;
-        return text;
-      },
+      // validator: (value) {
+      //   if (value.isEmpty) {
+      //     return 'Please enter your email';
+      //   }
+      //   var text = (!isAlpha(value.toString())) ? "Enter a valid email" : null;
+      //   return text;
+      // },
       controller: emailController,
       decoration: InputDecoration(
         labelText: 'name',
@@ -94,9 +95,8 @@ class LoginState extends State<Login> {
             padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             onPressed: () {
               if (_formKey.currentState.validate()) {
-                loginFb();
+                // loginFb();
               }
-              
             },
             child: Text(
               "Login",
@@ -152,14 +152,19 @@ class LoginState extends State<Login> {
                                 passwordField,
                                 SizedBox(height: 25.0),
                                 loginButton,
-                                GestureDetector(child:
-                                Text("Not have an account? Sign up here", style: TextStyle(decoration: TextDecoration.underline,
-                                color: ColorConstants.primaryColor
-                                ),),
-                                onTap:(){
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context)=> SignUp()));
-                                }),
+                                GestureDetector(
+                                    child: Text(
+                                      "Not have an account? Sign up here",
+                                      style: TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          color: ColorConstants.primaryColor),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => SignUp()));
+                                    }),
                               ],
                             ),
                           ],
@@ -175,30 +180,35 @@ class LoginState extends State<Login> {
       ),
     );
   }
-  void loginFb(){
-    firebaseAuth
-    .signInWithEmailAndPassword(
-      email: emailController.text, password: passwordController.text)
-      .then((result){
-        Navigator.pushReplacement(context,
-         MaterialPageRoute(builder: (context) => HomeScreen(uid:result.user.uid)),);
-      }).catchError((err){
-            showDialog(
-                context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Error"),
-              content: Text(err.message),
-              actions: [
-                FlatButton(
-                  child: Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
-    });
-  }
+
+//   void loginFb() {
+//     firebaseAuth
+//         .signInWithEmailAndPassword(
+//             email: emailController.text, password: passwordController.text)
+//         .then((result) {
+//       Navigator.pushReplacement(
+//         context,
+//         MaterialPageRoute(
+//             builder: (context) => HomeScreen(uid: result.user.uid)),
+//       );
+//     }).catchError((err) {
+//       showDialog(
+//           context: context,
+//           builder: (BuildContext context) {
+//             return AlertDialog(
+//               title: Text("Error"),
+//               content: Text(err.message),
+//               actions: [
+//                 FlatButton(
+//                   child: Text("Ok"),
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                 )
+//               ],
+//             );
+//           });
+//     });
+//   }
+// }
 }

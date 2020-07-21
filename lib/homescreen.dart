@@ -27,6 +27,7 @@ class HomeScreenState extends State<HomeScreen> {
     SearchScreen(),
     CategoryScreen(),
     ProfileScreen(),
+    
   ];
 int _selectedIndex = 0;
 

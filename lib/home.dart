@@ -16,6 +16,7 @@ class Home extends StatefulWidget{
 
 class HomeState extends State<Home>{
   FirebaseController controller = FirebaseController();
+   bool _progressController = true;
 
   @override
   void initState() {
@@ -23,21 +24,34 @@ class HomeState extends State<Home>{
     controller.getData();
     super.initState();
      controller.setData();
+     
   }
+  @override
+  void setState(fn) {
+    // TODO: implement setState
+    super.setState(fn);
+      // _progressController = false;
+   }
 
   @override
   Widget build(BuildContext context)
   {
-      
-   return Container(
+   
+return FutureBuilder(
+  future: controller.getData(),
+  builder: (context, snapshot){
+    if(snapshot.data!=null){
+    return Container(
        color: Colors.white,
       child: ListView.builder(
           itemCount: controller.posts.length,
           itemBuilder: (context, index) {
-            return FeedCard(post: controller.posts[index]);
+             return FeedCard(post: controller.posts[index]);
           }),
-    
     );
-     
+    }
+    return CircularProgressIndicator();
+  });
+    
   }
 }

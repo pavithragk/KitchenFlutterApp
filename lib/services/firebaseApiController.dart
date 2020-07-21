@@ -15,8 +15,10 @@ import 'package:pavitras_kitchen/homescreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:pavitras_kitchen/services/feedpostmodel.dart';
+import 'package:pavitras_kitchen/services/usermodel.dart';
 
 import 'package:pavitras_kitchen/signup.dart';
+
 
 
 
@@ -27,7 +29,10 @@ FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 class FirebaseController {
   List<FeedPost> posts = [];
 
-  void getData() async {
+  // get users => null;
+
+  // ignore: missing_return
+  Future<String> getData() async {
     databaseReference
         .collection("home")
         .document("SDRg8a48qViljze4hkhG")
@@ -35,9 +40,11 @@ class FirebaseController {
         .getDocuments()
         .then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
+        // print(result.data);
         FeedPost fposts = FeedPost.fromJson(result.data);
         posts.add(fposts);
       });
+    
     });
   }
  
@@ -131,15 +138,17 @@ class FirebaseController {
              print("successfully added!!");
             });
           }
+
+
        void getUserData()async{
-       await databaseReference
-       .collection("users")
-       .getDocuments()
-       .then((querySnapshot){
-        querySnapshot.documents.forEach((result){
-        print(result.data);
+       var firebaseUser = await FirebaseAuth.instance.currentUser();
+       databaseReference.collection("users").document(firebaseUser.uid).get().then((value){
+      //  print(value.data);
+      
+     
+     
       });
-    });
+    
     
   }
 

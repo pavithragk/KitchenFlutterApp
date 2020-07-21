@@ -1,33 +1,42 @@
+import 'dart:async';
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pavitras_kitchen/addpost.dart';
+import 'package:pavitras_kitchen/card.dart';
 import 'package:pavitras_kitchen/login.dart';
 import 'package:pavitras_kitchen/services/firebaseApiController.dart';
+import 'package:pavitras_kitchen/services/usermodel.dart';
+import 'package:pavitras_kitchen/signup.dart';
 import 'package:pavitras_kitchen/utils/colors.dart';
 import 'package:validators/validators.dart';
 
+final TextEditingController nameController = TextEditingController();
+final TextEditingController phoneController = TextEditingController();
+final TextEditingController emailController = TextEditingController();
+final TextEditingController changeController = TextEditingController();
+final _formKey = GlobalKey<FormState>();
+
 class ProfileScreen extends StatefulWidget {
+  ProfileScreen({Key key, this.uid}) : super(key: key);
+
+  final String uid;
+
   @override
   State<StatefulWidget> createState() {
     return ProfileScreenState();
   }
 }
 
-
 class ProfileScreenState extends State<ProfileScreen> {
   File _image;
-  
-  
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController changeController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
 
   String displayName;
   String displayPhoneNumber;
@@ -36,29 +45,83 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   Future<FirebaseUser> user = firebaseAuth.currentUser();
 
-  
+  // get userdata => null;
 
   @override
   Widget build(BuildContext context) {
-    Future uploadPic(BuildContext context)async{
-    String fileName = basename(_image.path);
-    StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    setState(() {
-      print("profile picture uploaded");
-       Scaffold.of(context).showSnackBar(SnackBar(content: Text('profile picture uploaded')));
-    });
-  
+    void getUserData() async {
+      var firebaseUser = await FirebaseAuth.instance.currentUser();
+      databaseReference
+          .collection("users")
+          .document(firebaseUser.uid)
+          .get()
+          .then((value) {
+        var userdata = value.data;
+        print('${userdata['name']}');
+      });
+    }
 
-}
+    // print('${value.data['name']}');
+    // print(Text);
+
+    //  setState(() {
+    //    nameController.text = value.data["name"];
+    //    emailController.text = value.data["email"];
+    //    phoneController.text = value.data["phoneNumber"];
+    //    passwordController.text = value.data["password"];
+    // });
+
+    // Text('name: ${document.data['name']}');
+
+    // initState(){
+    //   super.initState();
+    //   getUserData();
+    // }
+
+    //  void getUserData()async{
+    //    firebaseAuth.currentUser().then((currentUser)=>
+    //       databaseReference
+    //      .collection("users")
+    //      .document(currentUser.uid)
+    //      .get()
+    //      .then((DocumentSnapshot result){
+    //        if(result != null){
+    //          return Text("Loading..");
+    //        }
+    //        var userdata = result.data;
+    //        setState(() {
+    //         nameController.text = userdata["name"];
+    //         emailController.text = userdata["email"];
+    //         phoneController.text = userdata["phoneNumber"];
+
+    //        });
+    //      }));
+    //  }
+
+    Future uploadPic(BuildContext context) async {
+      String fileName = basename(_image.path);
+      StorageReference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child(fileName);
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      setState(() {
+        print("profile picture uploaded");
+        Scaffold.of(context)
+            .showSnackBar(SnackBar(content: Text('profile picture uploaded')));
+      });
+    }
+
     final name = TextFormField(
+      //  onChanged: saveOnChanged,
+      // initialValue: value.data["name"],
       validator: (value) {
         if (value.isEmpty) {
           return 'please enter your name';
         }
-        var text = (!isAlpha(value.toString())) ? 'enter a valid name' : null;
-        return text;
+        // return Text('${userdata['name']}');
+        // return Text('${value.data['name']}');
+        // var text = (!isAlpha(value.toString())) ? 'enter a valid name' : null;
+        // return text;
       },
       controller: nameController,
       decoration: InputDecoration(
@@ -171,184 +234,129 @@ class ProfileScreenState extends State<ProfileScreen> {
           );
         }));
 
-        final logout = Material(
-          borderRadius: BorderRadius.circular(0.0),
-          color: ColorConstants.secondaryColor,
-          child: Builder(builder: (context) {
-          return MaterialButton(
-            onPressed: () {
-              FirebaseAuth auth = FirebaseAuth.instance;
-              auth.signOut().then((res){
-                Navigator.pushReplacement(context, 
-                MaterialPageRoute(builder: (context) => Login()),
-                );
+    final logout = Material(
+      borderRadius: BorderRadius.circular(0.0),
+      color: ColorConstants.secondaryColor,
+      child: Builder(builder: (context) {
+        return MaterialButton(
+          onPressed: () {
+            // FirebaseAuth auth = FirebaseAuth.instance;
+            // auth.signOut().then((res){
+            //   Navigator.pushReplacement(context,
+            //   MaterialPageRoute(builder: (context) => Login()),
+            //   );
 
-              });
-            },
-            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-            child: Text(
-              'Logout',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: ColorConstants.primaryColor,
-              ),
+            // });
+
+            getUserData();
+          },
+          padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          child: Text(
+            'Logout',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: ColorConstants.primaryColor,
             ),
-          );
-        }
-        ),
-        
+          ),
         );
+      }),
+    );
 
-        Future<void> getImage() async {
-       var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-       setState(() {
+    Future<void> getImage() async {
+      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      setState(() {
         _image = image;
         print('image path $_image');
-       });
-       }
-      return  Container(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: 200.0,
-              width: 400.0,
-              color: ColorConstants.secondaryColor,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 20.0,
-                  top: 30.0,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 100.0),
-                      child: Container(
-                        child:
-                        InkWell(child:Text(
-                          'Edit profile',
-                          style: TextStyle(
-                              color: ColorConstants.primaryColor,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.end,
-                        ),
-                        
-                        ),
-                      ),
-                    ),
-                    GestureDetector(child:
-                    CircleAvatar(
+      });
+    }
+
+    return Material(
+        child: Container(
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 200.0,
+            width: 400.0,
+            color: ColorConstants.secondaryColor,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 20.0,
+                top: 30.0,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  GestureDetector(
+                    child: CircleAvatar(
                       radius: 50,
                       backgroundColor: ColorConstants.primaryColor,
                       child: ClipOval(
                         child: SizedBox(
                           width: 180.0,
                           height: 180.0,
-                          child: _image == null ? Icon(Icons.add):
-                           Image.file(_image,fit: BoxFit.fill),
+                          child: _image == null
+                              ? Icon(Icons.add)
+                              : Image.file(_image, fit: BoxFit.fill),
                         ),
                       ),
                     ),
                     onTap: getImage,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                          child: Text(
-                        "Pavitra's kitchen",
-                        style: TextStyle(color: ColorConstants.primaryColor),
-                      )),
-                    ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Container(
+                        child: Text(
+                      "user name",
+                      style: TextStyle(color: ColorConstants.primaryColor),
+                    )),
+                  ),
+                ],
               ),
             ),
-            Form(
-              key: _formKey,
-              child: Expanded(
-                child: ListView(children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 50.0, right: 50.0),
-                    child: Column(children: <Widget>[
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      name,
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      phoneNumber,
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      emailField,
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      changePassword,
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          submitButton,
-                          Padding(
-                            padding: const EdgeInsets.only(left: 60.0),
-                            child: logout,
-                          ),
-                        ],
-                      ),
-                    ]),
-                  )
-                ]),
-              ),
-            )
-          ],
-        ),
-    );
-
-
-
-   
-  //  setState(() {
-  //    userSnapshot = userSnapshot.data;
-  //  });
-
-      // return Scaffold(
-      //    body: Container(
-      //      child: Column(
-      //        children: <Widget>[
-      //       // Text("${userSnapshot["email"]}"),
-      //       Text("text1"),
-      //       Text("text1"),
-      //       Text("text1"),
-      //       RaisedButton(onPressed: (){
-      //        getName();
-      //       })
-      //     ],
-      //   ),
-      // ),
-      
-
-      
-    // );
-   
-}
-
-// void getName()async{
-//      final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-//    final currentUserId = user.uid;
-//     await databaseReference
-//     .collection("users")
-//     .document(currentUserId)
-//     .get()
-//     .then((DocumentSnapshot userSnapshot) => {
-//          print(userSnapshot["email"])
-       
-//     }
-    
-//     );
-//   }
-
+          ),
+          Form(
+            key: _formKey,
+            child: Expanded(
+              child: ListView(children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+                  child: Column(children: <Widget>[
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    name,
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    phoneNumber,
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    emailField,
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    changePassword,
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        submitButton,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 60.0),
+                          child: logout,
+                        ),
+                      ],
+                    ),
+                  ]),
+                )
+              ]),
+            ),
+          )
+        ],
+      ),
+    ));
+  }
 }
